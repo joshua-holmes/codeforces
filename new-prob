@@ -1,0 +1,126 @@
+#!/bin/python3
+from bs4 import BeautifulSoup
+import os
+from pathlib import Path
+import re
+import requests
+import shutil
+import subprocess
+from typing import Tuple
+
+class SetupProblem:
+    def __init__(self, title, description) -> None:
+        # create necessary directories
+        top_dir = os.path.dirname(__file__)
+        if top_dir[-1] == ".":
+            top_dir = top_dir[:-1]
+        self.top_dir = top_dir
+        self.problem_dir = self.top_dir + "problems/" + self.format_to_snake_case(title) + "/"
+        Path(self.problem_dir).mkdir(parents=True, exist_ok=True)
+        
+        # write problem description html to README.md
+        with open(self.problem_dir + "README.md", mode="w") as f:
+            f.write(f"# {title}\n" + description)
+
+    def format_to_snake_case(self, str_in):
+        str_out = str_in.lower().replace(" ", "_")
+        return str_out
+
+class SetupPython(SetupProblem):
+    def __init__(self, title, description) -> None:
+        super().__init__(title, description)
+        with open(self.problem_dir + "python.py", mode="w") as f:
+            f.write(
+"""\
+def main():
+    num_of_tests = input()
+    for _ in num_of_tests:
+        # write code here
+        pass
+
+if __name__ == "__main__":
+    main()
+"""
+            )
+
+class SetupRust(SetupProblem):
+    def __init__(self, title, description) -> None:
+        super().__init__(title, description)
+        rust_dir = Path(self.problem_dir + "rust/")
+        if rust_dir.exists():
+            shutil.rmtree(rust_dir)
+        subprocess.run(["cargo", "new", "rust"], cwd=self.problem_dir, text=True, capture_output=True)
+        with open(self.problem_dir + "rust/src/main.rs", "w") as f:
+            f.write(
+"""\
+use std::{error::Error, io};
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let mut s = String::new();
+    io::stdin().read_line(&mut s)?;
+    let num_of_tests: i32 = s.trim().parse()?;
+
+    for _ in 0..num_of_tests {
+        // write code here
+    }
+
+    Ok(())
+}
+"""
+            )
+
+SUPPORTED_LANGUAGES = {
+    "python": SetupPython,
+    "rust": SetupRust,
+}
+
+def scrape_problem(url: str) -> Tuple[str, str]:
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
+
+    description_html = soup.find_all("div", class_="problem-statement")[0]
+    title_html = description_html.find_all("div", class_="title")[0]
+
+    title = title_html.text
+    # example: find "C1. " in "C1. A Title" and remove it from `title`
+    re_match = re.match("^[A-Z]+[0-9]*\. ", title)
+    if re_match:
+        title = title[re_match.end():]
+
+    # delete title from description
+    title_html.clear()
+
+    # inject url at bottom of description
+    link = soup.new_tag("a", href=url, target="_blank")
+    link.string = url
+    description_html.append(link)
+
+    description = description_html.prettify()
+
+    return title, description
+
+def main():
+    print("Enter URL of codeforces problem:")
+    # url = input().strip()
+    url = "https://codeforces.com/problemset/problem/146/A"
+    print()
+
+    title, description = scrape_problem(url)
+
+    print("Enter programming language you'd like to use. Supported language are:")
+    for l in SUPPORTED_LANGUAGES:
+        print(f"\t{l}")
+    language = input().strip().lower()
+    print()
+    
+    if language not in SUPPORTED_LANGUAGES:
+        raise Exception(f'Language "{language}" is not supported. Please run the program again.')
+
+    SetupClass = SUPPORTED_LANGUAGES[language]
+    problem = SetupClass(title, description)
+
+    print(f"Done with process {problem.__class__.__name__}. Problem can be found here:")
+    print(problem.problem_dir)
+
+if __name__ == "__main__":
+    main()
