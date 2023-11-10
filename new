@@ -147,6 +147,15 @@ SUPPORTED_LANGUAGES = {
 }
 
 def scrape_problem(url: str) -> Tuple[str, str]:
+    """
+    Scrapes codeforces website for title and problem description. Also adds URL to bottom of description.
+
+    Arguments:
+        url -- URL of codeforces problem to scrape
+
+    Returns:
+        tuple -- Tuple with 2 string values, 1st is title of problem, 2nd is description
+    """
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
 
@@ -171,12 +180,35 @@ def scrape_problem(url: str) -> Tuple[str, str]:
 
     return title, description
 
+def generate_problem_info() -> Tuple[str, str]:
+    """
+    Ask for title from user (stdin), then returns that along with generic description.
+
+    Returns:
+        tuple -- Tuple with 2 string values, 1st is title of problem, 2nd is description
+    """
+    print("Please enter title of problem or name of directory to generate:")
+    title = input()
+    if not title:
+        raise Exception("No title/directory name provided!")
+    description = f"""\
+# {title}
+
+URL of codeforces problem was not provided, so this generic description is provided instead
+    """
+
+    return title, description
+
 def main():
-    print("Enter URL of codeforces problem:")
+    print("Enter URL of codeforces problem (optional):")
     url = input().strip()
     print()
 
-    title, description = scrape_problem(url)
+    if url:
+        title, description = scrape_problem(url)
+    else:
+        print("No URL provided")
+        title, description = generate_problem_info()
 
     print("Enter programming language you'd like to use. Supported language are:")
     for l in SUPPORTED_LANGUAGES:
