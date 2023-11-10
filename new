@@ -173,8 +173,7 @@ def scrape_problem(url: str) -> Tuple[str, str]:
 
 def main():
     print("Enter URL of codeforces problem:")
-    # url = input().strip()
-    url = "https://codeforces.com/problemset/problem/146/A"
+    url = input().strip()
     print()
 
     title, description = scrape_problem(url)
