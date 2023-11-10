@@ -1,150 +1,11 @@
 #!/bin/python3
 from bs4 import BeautifulSoup
-import os
-from pathlib import Path
 import re
 import requests
-import shutil
-import subprocess
 from typing import Tuple
 
-class SetupProblem:
-    def __init__(self, title, description) -> None:
-        # create necessary directories
-        top_dir = os.path.dirname(__file__)
-        if top_dir[-1] == ".":
-            top_dir = top_dir[:-1]
-        self.top_dir = top_dir
-        self.problem_dir = self.top_dir + "problems/" + self.format_to_snake_case(title) + "/"
-        Path(self.problem_dir).mkdir(parents=True, exist_ok=True)
-        
-        # write problem description html to README.md
-        with open(self.problem_dir + "README.md", mode="w") as f:
-            f.write(f"# {title}\n" + description)
+from language_support import SUPPORTED_LANGUAGES
 
-    def format_to_snake_case(self, str_in):
-        str_out = str_in.lower().replace(" ", "_")
-        return str_out
-
-class SetupPython(SetupProblem):
-    def __init__(self, title, description) -> None:
-        super().__init__(title, description)
-        with open(self.problem_dir + "python.py", mode="w") as f:
-            f.write(
-"""\
-def main():
-    num_of_tests = input()
-    for _ in num_of_tests:
-        # write code here
-        pass
-
-if __name__ == "__main__":
-    main()
-"""
-            )
-
-class SetupRust(SetupProblem):
-    def __init__(self, title, description) -> None:
-        super().__init__(title, description)
-        rust_dir = Path(self.problem_dir + "rust/")
-        if rust_dir.exists():
-            shutil.rmtree(rust_dir)
-        subprocess.run(["cargo", "new", "rust"], cwd=self.problem_dir, text=True, capture_output=True)
-        with open(self.problem_dir + "rust/src/main.rs", "w") as f:
-            f.write(
-"""\
-use std::{error::Error, io};
-
-fn main() -> Result<(), Box<dyn Error>> {
-    let mut s = String::new();
-    io::stdin().read_line(&mut s)?;
-    let num_of_tests: i32 = s.trim().parse()?;
-
-    for _ in 0..num_of_tests {
-        // write code here
-    }
-
-    Ok(())
-}
-"""
-            )
-
-class SetupCpp(SetupProblem):
-    def __init__(self, title, description) -> None:
-        super().__init__(title, description)
-        cpp_dir = self.problem_dir + "cpp/"
-        Path(cpp_dir).mkdir(exist_ok=True)
-
-        # main cpp file
-        with open(cpp_dir + "main.cpp", mode="w") as f:
-            f.write(
-            """\
-#include <iostream>
-#include <string>
-#include "string_utils.hpp"
-
-int main() {
-    std::string num_of_tests_str;
-    std::cin >> num_of_tests_str;
-    trim(num_of_tests_str);
-    int num_of_tests = std::stoi(num_of_tests_str);
-
-    for (int _ = 0; _ < num_of_tests; _++) {
-        // write code here
-    }
-}
-"""
-            )
-
-        # support for `trim` function in `main.cpp`
-        with open(cpp_dir + "string_utils.cpp", mode="w") as f:
-            f.write(
-                """\
-#include <string>
-#include <algorithm> 
-#include <cctype>
-
-void trim(std::string &s) {
-    // trim beginning
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }));
-
-    // trim end
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
-"""
-            )
-
-        with open(cpp_dir + "string_utils.hpp", mode="w") as f:
-            f.write(
-                """\
-#include <string>
-
-void trim(std::string &s);
-"""
-            )
-
-        # for quick and easy testing, just run `make` to compile, run and cleanup
-        with open(cpp_dir + "Makefile", mode="w") as f:
-            f.write(
-                """\
-run: main.cpp
-	@g++ *.cpp && ./a.out && rm a.out
-"""
-            )
-
-        # so LSP can use c++20
-        with open(cpp_dir + "compile_flags.txt", mode="w") as f:
-            f.write("-std=c++20")
-
-SUPPORTED_LANGUAGES = {
-    "python": SetupPython,
-    "rust": SetupRust,
-    "c++": SetupCpp,
-}
 
 def scrape_problem(url: str) -> Tuple[str, str]:
     """
@@ -180,6 +41,7 @@ def scrape_problem(url: str) -> Tuple[str, str]:
 
     return title, description
 
+
 def generate_problem_info() -> Tuple[str, str]:
     """
     Ask for title from user (stdin), then returns that along with generic description.
@@ -198,6 +60,7 @@ URL of codeforces problem was not provided, so this generic description is provi
     """
 
     return title, description
+
 
 def main():
     print("Enter URL of codeforces problem (optional):")
@@ -227,3 +90,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
