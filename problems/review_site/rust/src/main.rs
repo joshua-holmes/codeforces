@@ -10,17 +10,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let mut s = String::new();
         io::stdin().read_line(&mut s)?;
-        let reviewers: Vec<&str> = s.trim().split(" ").collect();
-        let mut total_likes = 0;
-        for r in reviewers {
-            match r {
-                "1" => total_likes += 1,
-                "3" => total_likes += 1,
-                _ => {}
-            }
-        }
+        let likes = s.trim().split(" ").filter(|n| ["1", "3"].contains(n)).count();
 
-        println!("{}", total_likes);
+        println!("{}", likes);
     }
 
     Ok(())
