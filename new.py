@@ -79,20 +79,19 @@ def main():
     url = input().strip()
     print()
 
-    if url:
-        title, description = scrape_problem(url)
-    else:
-        print("No URL provided")
-        title, description = generate_problem_info()
-
     print("Enter programming language you'd like to use. Supported language are:")
     for l in SUPPORTED_LANGUAGES:
         print(f"\t{l}")
     language = input().strip().lower()
     print()
-    
     if language not in SUPPORTED_LANGUAGES:
         raise Exception(f'Language "{language}" is not supported. Please run the program again.')
+
+    if url:
+        title, description = scrape_problem(url)
+    else:
+        print("No URL provided")
+        title, description = generate_problem_info()
 
     SetupClass = SUPPORTED_LANGUAGES[language]
     problem = SetupClass(title, description)
