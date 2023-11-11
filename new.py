@@ -87,7 +87,9 @@ def main():
         raise Exception(f'Language "{language}" is not supported. Please run the program again.')
 
     if url:
+        print("Scraping codeforces....")
         title, problem_html = scrape_problem(url)
+        print()
     else:
         print("No URL provided")
         title, problem_html = generate_problem_info()
