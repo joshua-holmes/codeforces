@@ -1,3 +1,4 @@
+from language_support.c import SetupC
 from language_support.javascript import SetupJavascript
 from language_support.python import SetupPython
 from language_support.rust import SetupRust
@@ -12,6 +13,7 @@ SUPPORTED_LANGUAGES = {
     "python": SetupPython,
     "rust": SetupRust,
     "c++": SetupCpp,
+    "c": SetupC,
     "javascript": SetupJavascript
 }
 
