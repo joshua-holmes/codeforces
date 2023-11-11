@@ -2,8 +2,8 @@ from language_support.base import SetupProblem
 
 
 class SetupPython(SetupProblem):
-    def __init__(self, title, description) -> None:
-        super().__init__(title, description)
+    def __init__(self, title, problem_html) -> None:
+        super().__init__(title, problem_html)
         with open(self.problem_dir / "python.py", mode="w") as f:
             f.write(
 """\

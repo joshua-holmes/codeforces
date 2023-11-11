@@ -5,8 +5,8 @@ from language_support.base import SetupProblem
 
 
 class SetupRust(SetupProblem):
-    def __init__(self, title, description) -> None:
-        super().__init__(title, description)
+    def __init__(self, title, problem_html) -> None:
+        super().__init__(title, problem_html)
         rust_dir = self.problem_dir / "rust"
         if rust_dir.exists():
             shutil.rmtree(rust_dir)

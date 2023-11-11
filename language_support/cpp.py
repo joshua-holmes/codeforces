@@ -2,8 +2,8 @@ from language_support.base import SetupProblem
 
 
 class SetupCpp(SetupProblem):
-    def __init__(self, title, description) -> None:
-        super().__init__(title, description)
+    def __init__(self, title, problem_html) -> None:
+        super().__init__(title, problem_html)
         cpp_dir = self.problem_dir / "cpp"
         cpp_dir.mkdir(exist_ok=True)
 
