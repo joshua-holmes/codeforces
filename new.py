@@ -1,10 +1,25 @@
-#!/bin/python3
-from bs4 import BeautifulSoup
 import re
-import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
 from typing import Tuple
 
+
 from language_support import SUPPORTED_LANGUAGES
+
+
+# selenium constants (selenium is the web scraping tool)
+DRIVER = None
+HEADLESS = True
+
+
+def get_driver() -> WebDriver:
+    global DRIVER
+    if not DRIVER:
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        DRIVER = webdriver.Chrome(options=options)
+    return DRIVER
 
 
 def scrape_problem(url: str) -> Tuple[str, str]:
@@ -17,27 +32,23 @@ def scrape_problem(url: str) -> Tuple[str, str]:
     Returns:
         tuple -- Tuple with 2 string values, 1st is title of problem, 2nd is description
     """
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
+    driver = get_driver()
+    driver.get(url)
 
-    description_html = soup.find_all("div", class_="problem-statement")[0]
-    title_html = description_html.find_all("div", class_="title")[0]
+    # get problem data
+    description_obj = driver.find_element(By.CLASS_NAME, "problem-statement")
+    description = description_obj.get_attribute("innerHTML")
+    if not description:
+        raise Exception("Cannot get problem description when from url")
+    title = description_obj.find_element(By.CLASS_NAME, "title").text
 
-    title = title_html.text
-    # example: find "C1. " in "C1. A Title" and remove it from `title`
+    # example: `title` looks like this -> "C1. A Title". find "C1. " and remove it from `title`
     re_match = re.match("^[A-Z]+[0-9]*\. ", title)
     if re_match:
         title = title[re_match.end():]
 
-    # delete title from description
-    title_html.clear()
-
     # inject url at bottom of description
-    link = soup.new_tag("a", href=url, target="_blank")
-    link.string = url
-    description_html.append(link)
-
-    description = description_html.prettify()
+    description += f'\n<a href={url} target="_blank">{url}</a>'
 
     return title, description
 

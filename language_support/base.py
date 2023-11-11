@@ -9,7 +9,7 @@ class SetupProblem:
         self.problem_dir.mkdir(parents=True, exist_ok=True)
         
         # write problem description html to README.md
-        with open(self.problem_dir / "README.md", mode="w") as f:
+        with open(self.problem_dir / "README.html", mode="w") as f:
             f.write(f"# {title}\n" + description)
 
     def format_to_snake_case(self, str_in):
