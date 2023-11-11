@@ -51,6 +51,7 @@ def generate_problem_info() -> Tuple[str, str]:
     """
     print("Please enter title of problem or name of directory to generate:")
     title = input()
+    print()
     if not title:
         raise Exception("No title/directory name provided!")
     description = f"""\
