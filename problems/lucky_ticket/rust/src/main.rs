@@ -13,7 +13,7 @@ fn main() -> io::Result<()> {
     let mut sum1 = 0;
     let mut sum2 = 0;
     for (i, b) in ticket_bytes.iter().enumerate() {
-        let num = (*b as char).to_digit(10).unwrap();
+        let num: u32 = (*b as char).to_digit(10).unwrap();
         if (num != 4) && (num != 7) {
             println!("NO");
             return Ok(());
