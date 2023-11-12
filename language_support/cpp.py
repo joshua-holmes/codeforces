@@ -20,7 +20,8 @@ int main()
     std::cin >> num_of_tests_str;
     int num_of_tests = std::stoi(num_of_tests_str);
 
-    for (int _ = 0; _ < num_of_tests; _++) {
+    for (int _ = 0; _ < num_of_tests; _++)
+    {
         // write code here
     }
 }
