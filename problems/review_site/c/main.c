@@ -19,7 +19,8 @@ int main()
         for (int i = 0; i < strlen(reviewers); i++)
         {
             char c = reviewers[i];
-            if (c == '1' || c == '3') {
+            if (c == '1' || c == '3')
+            {
                 likes++;
             }
         }
