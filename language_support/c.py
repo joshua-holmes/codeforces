@@ -16,11 +16,12 @@ class SetupC(SetupProblem):
 
 int main()
 {
-    char num_of_tests_str[10240] = ""; // allows 10,240 chars (10KB), adjust if needed
-    scanf("%s", num_of_tests_str);
+    char num_of_tests_str[1024]; // allows 1,024 chars (1KB), adjust if needed
+    fgets(num_of_tests_str, 1024, stdin);
     int num_of_tests = atoi(num_of_tests_str);
 
-    for (int _ = 0; _ < num_of_tests; _++) {
+    for (int _ = 0; _ < num_of_tests; _++)
+    {
         // write code here
     }
 }
