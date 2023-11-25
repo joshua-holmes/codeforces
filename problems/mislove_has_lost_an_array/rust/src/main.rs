@@ -11,14 +11,14 @@ fn main() -> Result<(), Box<dyn Error>> {
     );
 
     let min = {
-        let num_of_ones: i64 = n - l + 1;
+        let num_of_ones = n - l + 1;
         let num_of_non_ones = l - 1;
 
         let mut sum = num_of_ones;
 
         for i in 1..=num_of_non_ones {
             let two: i64 = 2;
-            let non_one: i64 = two.pow(i as u32);
+            let non_one = two.pow(i as u32);
 
             sum += non_one;
         }
@@ -27,8 +27,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     };
 
     let max = {
-        let num_of_ones: i64 = if r > 1 { 1 } else { n };
-        let num_of_non_ones: i64 = n - num_of_ones;
+        let num_of_ones = if r > 1 { 1 } else { n };
+        let num_of_non_ones = n - num_of_ones;
 
         let mut sum = num_of_ones;
 
