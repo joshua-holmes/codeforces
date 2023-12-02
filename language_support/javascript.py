@@ -7,20 +7,36 @@ class SetupJavascript(SetupProblem):
         with open(self.problem_dir / "javascript.js", mode="w") as f:
             f.write(
 """\
-const readline = require("readline").createInterface({
-    input: process.stdin,
-    output: process.stdout
+"use strict";
+process.stdin.resume();
+process.stdin.setEncoding("utf-8");
+ 
+function print(x) {
+  console.log(x);
+}
+let inputString = "";
+let currentLine = 0;
+ 
+process.stdin.on("data", (inputStdin) => {
+  inputString += inputStdin;
 });
-
-readline.question("", s => {
-    const num_of_tests = parseInt(s.trim());
-
-    for (let _ = 0; _ < num_of_tests; _++) {
-        // write code here
-    }
-
-    readline.close();
+process.stdin.on("end", () => {
+  inputString = inputString.split("\\n");
+  main();
 });
+function readline() {
+  return inputString[currentLine++];
+}
+ 
+// ********** Code Start **********
+
+function main() {
+  let testCases = parseInt(readline());
+
+  for (let _ = 0; _ < testCases; _++) {
+    // write code here
+  }
+}
 """
             )
 
