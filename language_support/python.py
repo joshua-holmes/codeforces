@@ -8,8 +8,8 @@ class SetupPython(SetupProblem):
             f.write(
 """\
 def main():
-    num_of_tests = input()
-    for _ in num_of_tests:
+    num_of_tests = int(input())
+    for _ in range(num_of_tests):
         # write code here
         pass
 
