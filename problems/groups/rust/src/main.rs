@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let mut eligible_days = Vec::new();
         for (i, d) in days.iter().enumerate() {
             if *d >= students.len() as u64 / 2 {
-                eligible_days.push((i, d));
+                eligible_days.push(i);
             }
         }
 
@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 let day1 = eligible_days[i];
                 let day2 = eligible_days[j];
                 for s in students.iter() {
-                    if s[day1.0] != 1 && s[day2.0] != 1 {
+                    if s[day1] != 1 && s[day2] != 1 {
                         continue 'day;
                     }
                 }
