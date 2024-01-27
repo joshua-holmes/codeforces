@@ -19,20 +19,17 @@ fn main() -> Result<(), Box<dyn Error>> {
         let has_one_zero = [x, y].into_iter().filter(|n| *n != 0).count() == 1;
         let is_divisible = if non_zero == 0 { false } else { (n - 1) % non_zero == 0 };
 
-            // either x or y must be non-zero
         let result = if has_one_zero && is_divisible {
-            (0..(n - 1))
-                .map(|i| {
-                    let winner = if i < non_zero {
-                        1
-                    } else {
-                        let section = i / non_zero;
-                        section * non_zero + 2
-                    };
-                    winner.to_string()
-                })
-                .collect::<Vec<_>>()
-                .join(" ")
+            let mut winners = Vec::with_capacity(n as usize - 1);
+            let mut i = 0;
+            while i < n - 1 {
+                let winner = i + 2;
+                for _ in 0..non_zero {
+                    winners.push(winner.to_string());
+                    i += 1;
+                }
+            }
+            winners.join(" ")
         } else {
             (-1).to_string()
         };
