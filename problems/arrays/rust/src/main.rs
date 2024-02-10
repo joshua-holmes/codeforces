@@ -10,17 +10,15 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut s = String::new();
     io::stdin().read_line(&mut s)?;
-    let mut array_a: Vec<i32> = s.trim().split(" ").map(|n| n.parse().unwrap()).collect();
+    let array_a: Vec<i32> = s.trim().split(" ").map(|n| n.parse().unwrap()).collect();
 
     let mut s = String::new();
     io::stdin().read_line(&mut s)?;
     let mut array_b: Vec<i32> = s.trim().split(" ").map(|n| n.parse().unwrap()).collect();
+    array_b.reverse();
 
-    array_a.sort();
-    array_b.sort();
-
-    let largest_a = array_a.iter().nth(k - 1).unwrap().clone();
-    let smallest_b = array_b.iter().rev().nth(m - 1).unwrap().clone();
+    let largest_a = array_a[k - 1];
+    let smallest_b = array_b[m - 1];
 
     let result = if largest_a < smallest_b {
         "YES"
